@@ -1,6 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.12.35527.113 d17.12
+VisualStudioVersion = 17.12.35527.113
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Simples.AppHost", "Simples.AppHost\Simples.AppHost.csproj", "{53325AB3-5461-4F45-A8B3-68AE88C4C2BC}"
 EndProject
@@ -9,6 +9,11 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Simples.ApiService", "Simples.ApiService\Simples.ApiService.csproj", "{C7AA7038-9900-4017-BFF8-F8BE807144E8}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Simples.Web", "Simples.Web\Simples.Web.csproj", "{1D0889F9-89A5-4010-8C88-553105CE7809}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Notes", "Notes", "{54B49C61-32CA-4F70-8158-A8AB369EF1D9}"
+	ProjectSection(SolutionItems) = preProject
+		todo.md = todo.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
