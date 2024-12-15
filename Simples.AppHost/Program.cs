@@ -8,7 +8,8 @@ var ollama = builder.AddOllama("ollama")
     .WithContainerRuntimeArgs("--gpus=all")
     .WithLifetime(ContainerLifetime.Persistent);
 
-var phi35 = ollama.AddModel("phi3.5");
+var phi35 = ollama.AddModel("phi3.5")
+    ;
 
 
 builder.AddContainer("homeassistant", "homeassistant/home-assistant")
@@ -18,12 +19,20 @@ builder.AddContainer("homeassistant", "homeassistant/home-assistant")
 var apiService = builder
     .AddProject<Projects.Simples_ApiService>("apiservice");
 
-builder.AddProject<Projects.Simples_Web>("webfrontend")
-    .WithExternalHttpEndpoints()
-    .WithReference(cache)
-    .WaitFor(cache)
+builder.AddNpmApp("svelete", "../Simples.Svelete")
     .WithReference(apiService)
-    .WithReference(phi35)
-    .WaitFor(apiService);
+    .WaitFor(apiService)
+    .WithEnvironment("BROWSER", "none") // Disable opening browser on npm start
+    .WithHttpEndpoint(env: "PORT")
+    .WithExternalHttpEndpoints()
+    .PublishAsDockerFile();
+
+//builder.AddProject<Projects.Simples_Web>("webfrontend")
+//    .WithExternalHttpEndpoints()
+//    .WithReference(cache)
+//    .WaitFor(cache)
+//    .WithReference(apiService)
+//    .WithReference(phi35)
+//    .WaitFor(apiService);
 
 builder.Build().Run();
