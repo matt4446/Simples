@@ -11,10 +11,11 @@ public static class ChatApiExtensions
 
         app.MapPost("/chat", async (IChatClient chat, ChatMessage message) =>
         {
-            var response = await chat.CompleteAsync(message.Message);
+            ChatCompletion response = await chat.CompleteAsync(message.Message);
  
             return response;
         });
     }
-    public record ChatMessage(string Message);
+    
 }
+public record ChatMessage(string Message);

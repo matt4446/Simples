@@ -14,9 +14,6 @@ var ollama = builder.AddOllama("ollama")
 var llarma = ollama.AddModel("llama3");
 var phi35 = ollama.AddModel("phi3.5");
 
-
-
-
 builder.AddContainer("homeassistant", "homeassistant/home-assistant")
     .WithVolume("config", "/etc/homeassistant")
     .WithLifetime(ContainerLifetime.Persistent);
