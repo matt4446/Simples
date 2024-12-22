@@ -1,0 +1,7 @@
+POST https://localhost:7429/chat
+Content-Type: application/json
+
+{
+  "message": "Hello, this is a test message",
+  "userId": "12345"
+}

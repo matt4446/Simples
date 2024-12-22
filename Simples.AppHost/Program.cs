@@ -5,11 +5,16 @@ var cache = builder.AddRedis("cache")
 
 //https://github.com/dotnet/docs-aspire/blob/main/docs/community-toolkit/ollama.md
 var ollama = builder.AddOllama("ollama")
+    .WithDataVolume()
     .WithContainerRuntimeArgs("--gpus=all")
-    .WithLifetime(ContainerLifetime.Persistent);
+    .WithLifetime(ContainerLifetime.Persistent)
+    .WithOpenWebUI()
+    .PublishAsContainer();
 
-var phi35 = ollama.AddModel("phi3.5")
-    ;
+var llarma = ollama.AddModel("llama3");
+var phi35 = ollama.AddModel("phi3.5");
+
+
 
 
 builder.AddContainer("homeassistant", "homeassistant/home-assistant")
@@ -17,13 +22,14 @@ builder.AddContainer("homeassistant", "homeassistant/home-assistant")
     .WithLifetime(ContainerLifetime.Persistent);
 
 var apiService = builder
-    .AddProject<Projects.Simples_ApiService>("apiservice");
+    .AddProject<Projects.Simples_ApiService>("apiservice")
+    .WithReference(phi35);
 
 builder.AddNpmApp("svelete", "../Simples.Svelete")
     .WithReference(apiService)
     .WaitFor(apiService)
     .WithEnvironment("BROWSER", "none") // Disable opening browser on npm start
-    .WithHttpEndpoint(env: "PORT")
+    .WithHttpEndpoint(env: "5173", targetPort: 5173)
     .WithExternalHttpEndpoints()
     .PublishAsDockerFile();
 
