@@ -9,12 +9,21 @@ public static class ChatApiExtensions
         app.MapGet("/chat", (IChatClient chat) => new ChatMessage("Hello, World!"))
             .WithName("GetChatMessage");
 
+
+        app.MapPost("/chat-simple", async (IChatClient chat, ChatMessage message) =>
+        {
+            var result = await chat.CompleteAsync(message.Message);
+
+            return result;
+        })
+            .WithName("post-chat-simple");
+
         app.MapPost("/chat", async (IChatClient chat, ChatMessage message) =>
         {
-            ChatCompletion response = await chat.CompleteAsync(message.Message);
+            var stream = chat.CompleteStreamingAsync(message.Message);
  
-            return response;
-        });
+            return stream;
+        }).WithName("post-chat");
     }
     
 }

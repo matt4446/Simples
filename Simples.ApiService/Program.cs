@@ -26,23 +26,22 @@ builder.Services.AddLogging(logging => {
     logging.AddConsole();
 });
 
+var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: MyAllowSpecificOrigins,
+                      policy =>
+                      {
+                          policy
+                            .AllowAnyOrigin()
+                            //.WithOrigins("http://localhost:5174")
+                            .AllowAnyHeader()
+                            .AllowAnyMethod();
+                      });
+});
+
 builder.AddOllamaSharpChatClient("ollama-phi3-5");
-
-//builder.Services.AddSingleton<IChatClient>(static serviceProvider =>
-//{
-//    var logger = serviceProvider.GetRequiredService<ILogger<OllamaChatClient>>();
-//    var config = serviceProvider.GetRequiredService<IConfiguration>();
-//    var ollamaCnnString = config.GetConnectionString("ollama-phi3-5");
-//    var defaultLLM = config["Aspire:OllamaSharp:ollama:Models:0"];
-
-//    logger.LogInformation("Ollama connection string: {0}", ollamaCnnString);
-//    logger.LogInformation("Default LLM: {0}", defaultLLM);
-
-//    IChatClient chatClient = new OllamaChatClient(new Uri(ollamaCnnString), defaultLLM);
-
-//    return chatClient;
-//});
-
 
 var app = builder.Build();
 
@@ -57,5 +56,6 @@ if (app.Environment.IsDevelopment())
 app.MapGet("/ping", () => "Pong");
 app.MapChatApi();
 app.MapDefaultEndpoints();
+app.UseCors(MyAllowSpecificOrigins);
 
 app.Run();

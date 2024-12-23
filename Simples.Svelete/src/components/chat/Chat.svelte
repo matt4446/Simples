@@ -4,6 +4,8 @@
   import * as Card from "$lib/components/ui/card";
   import Button from "$lib/components/ui/button/button.svelte";
   import Textarea from "$lib/components/ui/textarea/textarea.svelte";
+  import { chatService } from "../../services/chatService";
+  import { tap } from "rxjs";
   let messages: any = [];
   let newMessage = "";
   let isLoading = false;
@@ -16,10 +18,16 @@
       const timestamp = new Date().toLocaleString();
       messages = [...messages, { text: newMessage, sender: 'user', timestamp }];
 
+      chatService.ask(newMessage).pipe(tap((response) => {
+        messages = [...messages, { text: response.choices[0], sender: 'bot', timestamp }];
+      })).subscribe();
+
       newMessage = "";
 
             // Simulate waiting for a response
-      await new Promise(resolve => setTimeout(resolve, 10000));
+      // await new Promise(resolve => setTimeout(resolve, 10000));
+      chatService.ask("hello");
+
       isLoading = false;
     }
   }
