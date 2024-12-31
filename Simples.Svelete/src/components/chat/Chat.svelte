@@ -1,35 +1,73 @@
 <script lang="ts">
-  import { Icon, ArrowPathRoundedSquare, PaperAirplane  } from "svelte-hero-icons"
+  import {
+    Icon,
+    ArrowPathRoundedSquare,
+    PaperAirplane,
+  } from "svelte-hero-icons";
   import { onMount } from "svelte";
   import * as Card from "$lib/components/ui/card";
   import Button from "$lib/components/ui/button/button.svelte";
   import Textarea from "$lib/components/ui/textarea/textarea.svelte";
   import { chatService } from "../../services/chatService";
-  import { tap } from "rxjs";
-  let messages: any = [];
+  import { finalize, pipe, tap } from "rxjs";
+
+  interface Message {
+    text: string;
+    sender: "user" | "bot";
+    timestamp: string | null;
+    isLoading: boolean;
+  }
+
+  let messages: Message[] = [];
   let newMessage = "";
   let isLoading = false;
 
-
   async function sendMessage() {
 
-    if (newMessage.trim()) {
-      isLoading = true;
-      const timestamp = new Date().toLocaleString();
-      messages = [...messages, { text: newMessage, sender: 'user', timestamp }];
-
-      chatService.ask(newMessage).pipe(tap((response) => {
-        messages = [...messages, { text: response.choices[0], sender: 'bot', timestamp }];
-      })).subscribe();
-
-      newMessage = "";
-
-            // Simulate waiting for a response
-      // await new Promise(resolve => setTimeout(resolve, 10000));
-      chatService.ask("hello");
-
-      isLoading = false;
+    if (!newMessage.trim()) {
+      return;
     }
+
+    isLoading = true;
+    const userTimestamp = new Date().toLocaleString();
+    messages = [
+      ...messages,
+      {
+        text: newMessage,
+        sender: "user",
+        timestamp: userTimestamp,
+        isLoading: false,
+      },
+    ];
+
+    let botMessage: Message = {
+      text: "",
+      sender: "bot",
+      timestamp: null,
+      isLoading: true,
+    };
+
+    chatService
+      .ask(newMessage)
+      .pipe(
+        tap((response) => {
+          console.log(response);
+        }),
+        tap((updatedResponse) => {
+          botMessage.text = "hello ";
+          botMessage.isLoading = false;
+        }),
+        finalize(() => {
+          botMessage.isLoading = false;
+          botMessage.timestamp = new Date().toLocaleString();
+
+          isLoading = false;
+        })
+      )
+      .subscribe();
+
+      isLoading = true;
+      newMessage = "";
   }
 </script>
 
@@ -50,7 +88,6 @@
       >
         {message.text}
         <small class="text-gray-500">{message.timestamp}</small>
-
       </div>
     {/each}
   </Card.Content>
@@ -62,14 +99,13 @@
         class="block resize-none rounded-md border-0 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none sm:text-sm/6 [field-sizing:content] dark:text-gray-100 dark:bg-gray-800 dark:ring-gray-600"
       />
 
-      <Button 
-        onclick={() => sendMessage()} disabled={isLoading}>
+      <Button onclick={() => sendMessage()} disabled={isLoading}>
         {#if isLoading}
           <Icon src={ArrowPathRoundedSquare} class="animate-spin" />
         {:else}
-        <Icon src={PaperAirplane} />
-        Send
-        {/if} 
+          <Icon src={PaperAirplane} />
+          Send
+        {/if}
       </Button>
     </div>
   </Card.Footer>

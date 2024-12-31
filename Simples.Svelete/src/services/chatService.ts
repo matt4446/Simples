@@ -13,7 +13,7 @@ interface IMessage {
 export const chatService = {
   ask(question: string): Observable<ChatCompletionChunk> {
 
-    var query = fromFetch("https://localhost:34557/chat", {
+    var query = fromFetch("https://localhost:34557/chat-simple", {
         body: JSON.stringify({ Message: question }),
         headers: {
             "Content-Type": "application/json",

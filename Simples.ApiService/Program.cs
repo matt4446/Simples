@@ -2,6 +2,7 @@ using Microsoft.Extensions.AI;
 using OpenAI.Chat;
 using Simples.ApiService.Api;
 using Simples.ApiService.Clients;
+using Simples.ApiService.Tools;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,7 +14,7 @@ builder.Services.AddProblemDetails();
 
 //builder.AddOllamaClientApi("llama3");
 
-
+builder.Services.AddScoped<TestChatContext>();
 // Learn more about configuring OpenAPI at https://aka.ms/awspnet/openapi
 builder.Services.AddOpenApi();
 builder.Services.AddHttpClient<OllamaApiClient>(client =>
@@ -41,7 +42,10 @@ builder.Services.AddCors(options =>
                       });
 });
 
-builder.AddOllamaSharpChatClient("ollama-phi3-5");
+// doesnt support tools 
+//builder.AddOllamaSharpChatClient("ollama-phi3-5");
+
+builder.AddOllamaSharpChatClient("ollama-llama3-3");
 
 var app = builder.Build();
 

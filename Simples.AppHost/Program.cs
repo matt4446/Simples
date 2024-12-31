@@ -11,8 +11,9 @@ var ollama = builder.AddOllama("ollama")
     .WithOpenWebUI()
     .PublishAsContainer();
 
-var llarma = ollama.AddModel("llama3");
-var phi35 = ollama.AddModel("phi3.5");
+var llarma = ollama.AddModel("llama3.3");
+// doesnt support tools 
+//var phi35 = ollama.AddModel("phi3.5");
 
 builder.AddContainer("homeassistant", "homeassistant/home-assistant")
     .WithVolume("config", "/etc/homeassistant")
@@ -20,7 +21,7 @@ builder.AddContainer("homeassistant", "homeassistant/home-assistant")
 
 var apiService = builder
     .AddProject<Projects.Simples_ApiService>("apiservice")
-    .WithReference(phi35);
+    .WithReference(llarma);
 
 builder.AddNpmApp("svelete", "../Simples.Svelete")
     .WithReference(apiService)
