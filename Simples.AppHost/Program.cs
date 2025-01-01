@@ -21,7 +21,11 @@ var openChat = ollama.AddModel("openchat");
 //var phi35 = ollama.AddModel("phi3.5");
 
 builder.AddContainer("homeassistant", "homeassistant/home-assistant")
-    .WithVolume("config", "/etc/homeassistant")
+    //.WithArgs("--net=host")
+    .WithVolume("config", "/opt/simples/config")
+    .WithVolume("data", "/opt/simples/data" )
+    .WithHttpEndpoint(env: "8123", targetPort: 8123)
+    .WithExternalHttpEndpoints()
     .WithLifetime(ContainerLifetime.Persistent);
 
 var apiService = builder
