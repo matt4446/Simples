@@ -44,8 +44,10 @@ builder.Services.AddCors(options =>
 
 // doesnt support tools 
 //builder.AddOllamaSharpChatClient("ollama-phi3-5");
+//builder.AddOllamaSharpChatClient("phi4");
 
-builder.AddOllamaSharpChatClient("ollama-llama3-3");
+//builder.AddOllamaSharpChatClient("ollama-llama3-3");
+builder.AddOllamaSharpChatClient("llama-instruct");
 
 var app = builder.Build();
 

@@ -69,7 +69,7 @@ public sealed class TestTool(ILogger<TestTool> logger) : ITool
     public async Task<string> Execute()
     {
         logger.BeginScope("{ToolName}", Name);
-        logger.LogInformation("Executing", Name);
+        logger.LogInformation("Executing {ToolName}", Name);
 
         return "could do a thing";
     }
