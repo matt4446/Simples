@@ -16,11 +16,11 @@ var ollama = builder.AddOllama("ollama")
 var llama = ollama.AddModel("llama3.3");
 var codellama = ollama.AddModel("codellama");
 var openChat = ollama.AddModel("openchat");
-// doesnt support tools 
+// doesnt support tools :-/
 //var phi4 = ollama.AddHuggingFaceModel("phi4", "matteogeniaccio/phi-4");
 //var phi35 = ollama.AddModel("phi3.5");
 
-builder.AddContainer("homeassistant", "homeassistant/home-assistant")
+var homeAssistant = builder.AddContainer("homeassistant", "homeassistant/home-assistant")
     //.WithArgs("--net=host")
     .WithVolume("config", "/opt/simples/config")
     .WithVolume("data", "/opt/simples/data" )
@@ -28,9 +28,13 @@ builder.AddContainer("homeassistant", "homeassistant/home-assistant")
     .WithExternalHttpEndpoints()
     .WithLifetime(ContainerLifetime.Persistent);
 
+var homeAssistantHttp = homeAssistant.GetEndpoint("http");
+
 var apiService = builder
     .AddProject<Projects.Simples_ApiService>("apiservice")
+    .WithReference(homeAssistantHttp)
     .WithReference(llama)
+    .WithReference(codellama)
     .WithReference(openChat);
     //.WithReference(phi4);
 
