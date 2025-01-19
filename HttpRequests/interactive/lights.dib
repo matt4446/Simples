@@ -1,0 +1,29 @@
+#!meta
+
+{"kernelInfo":{"defaultKernelName":"csharp","items":[{"aliases":[],"languageName":"csharp","name":"csharp"}]}}
+
+#!csharp
+
+using System.Net.Http;
+using System.Threading.Tasks;
+
+public async Task<string> MakePostRequestAsync(string url, string jsonContent)
+{
+    using (HttpClient client = new HttpClient())
+    {
+        HttpContent content = new StringContent(jsonContent, System.Text.Encoding.UTF8, "application/json");
+        HttpResponseMessage response = await client.PostAsync(url, content);
+        response.EnsureSuccessStatusCode();
+        return await response.Content.ReadAsStringAsync();
+    }
+}
+
+var jsonContent = """
+{
+  "Message": "Hello, this is a test message",
+  "userId": "12345"
+}
+""";
+
+var response = await MakePostRequestAsync("https://localhost:34557/chat", jsonContent);
+response.Display();

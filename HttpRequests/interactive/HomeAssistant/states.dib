@@ -1,0 +1,23 @@
+#!meta
+
+{"kernelInfo":{"defaultKernelName":"csharp","items":[{"aliases":[],"languageName":"csharp","name":"csharp"}]}}
+
+#!csharp
+
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Threading.Tasks;
+
+public async Task<string> GetHomeAssistantDataAsync(string url, string token)
+{
+    using (HttpClient client = new HttpClient())
+    {
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+        HttpResponseMessage response = await client.GetAsync(url);
+        response.EnsureSuccessStatusCode();
+        return await response.Content.ReadAsStringAsync();
+    }
+}
+
+var result = await GetHomeAssistantDataAsync("http://127.0.0.1:57980/api/states", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJiM2Y1YTAwOGVjZjY0NTliOWZhYTQ5MmNiZDU2YWYxNSIsImlhdCI6MTczNzI0OTE5OCwiZXhwIjoyMDUyNjA5MTk4fQ.nxSbJGEMScLBhwAggw3rqjht-MZpVbmO0Jr_9ADdkzc");
+result.Display();

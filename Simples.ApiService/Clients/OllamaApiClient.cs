@@ -14,3 +14,11 @@ public sealed class OllamaApiClient(HttpClient httpClient)
         return false;
     }
 }
+
+public sealed class Overseer()
+{
+}
+
+public sealed class SpecialtyChat 
+{
+}

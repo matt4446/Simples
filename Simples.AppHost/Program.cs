@@ -16,27 +16,29 @@ var ollama = builder.AddOllama("ollama")
 var llama = ollama.AddModel("llama3.3");
 var codellama = ollama.AddModel("codellama");
 var openChat = ollama.AddModel("openchat");
+// embed 
+// https://dataloop.ai/library/model/nomic-ai_nomic-embed-text-v15/#:~:text=It%E2%80%99s%20simple%3A%20just%20add%20a%20task%20instruction%20prefix,with%20questions%2C%20you%20can%20use%20the%20search_query%20prefix.
+var nomic = ollama.AddModel("nomic-embed-text");
 // doesnt support tools :-/
-//var phi4 = ollama.AddHuggingFaceModel("phi4", "matteogeniaccio/phi-4");
+var phi4 = ollama.AddHuggingFaceModel("phi4", "matteogeniaccio/phi-4");
 //var phi35 = ollama.AddModel("phi3.5");
 
 var homeAssistant = builder.AddContainer("homeassistant", "homeassistant/home-assistant")
-    //.WithArgs("--net=host")
-    .WithVolume("config", "/opt/simples/config")
-    .WithVolume("data", "/opt/simples/data" )
-    .WithHttpEndpoint(env: "8123", targetPort: 8123)
-    .WithExternalHttpEndpoints()
+    .WithVolume("config", "/config")
+    .WithHttpEndpoint(targetPort: 8123)
     .WithLifetime(ContainerLifetime.Persistent);
 
 var homeAssistantHttp = homeAssistant.GetEndpoint("http");
+var homeAssistantHttps = homeAssistant.GetEndpoint("https");
 
 var apiService = builder
     .AddProject<Projects.Simples_ApiService>("apiservice")
     .WithReference(homeAssistantHttp)
+    .WithReference(homeAssistantHttps)
     .WithReference(llama)
     .WithReference(codellama)
-    .WithReference(openChat);
-    //.WithReference(phi4);
+    .WithReference(openChat)
+    .WithReference(phi4);
 
 builder.AddNpmApp("svelete", "../Simples.Svelete")
     .WithReference(apiService)
@@ -45,13 +47,5 @@ builder.AddNpmApp("svelete", "../Simples.Svelete")
     .WithHttpEndpoint(env: "5173", targetPort: 5173)
     .WithExternalHttpEndpoints()
     .PublishAsDockerFile();
-
-//builder.AddProject<Projects.Simples_Web>("webfrontend")
-//    .WithExternalHttpEndpoints()
-//    .WithReference(cache)
-//    .WaitFor(cache)
-//    .WithReference(apiService)
-//    .WithReference(phi35)
-//    .WaitFor(apiService);
 
 builder.Build().Run();

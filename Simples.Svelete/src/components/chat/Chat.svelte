@@ -54,7 +54,7 @@
           console.log(response);
         }),
         tap((updatedResponse) => {
-          botMessage.text = "hello ";
+          botMessage.text = updatedResponse.choices[0].contents;
           botMessage.isLoading = false;
         }),
         finalize(() => {
