@@ -1,8 +1,9 @@
 ﻿using Microsoft.SemanticKernel.Connectors.Ollama;
 using Microsoft.SemanticKernel;
-using OllamaSharp.Models;
 using Simples.ApiService.Services.HomeAutomation;
-using Microsoft.Extensions.AI;
+using Simples.ApiService.Tools;
+using Microsoft.SemanticKernel.ChatCompletion;
+using Simples.ApiService.Agents;
 
 namespace Simples.ApiService.Registration;
 public static class AiRegiistrationExtensions
@@ -15,35 +16,25 @@ public static class AiRegiistrationExtensions
         builder.Services.AddScoped<HomeAutomationWebSocket>();
         builder.Services.AddScoped<UpdateHomeAutomationService>();
 
-        // doesnt support tools 
-        //builder.AddOllamaSharpChatClient("ollama-phi3-5");
-        //builder.AddOllamaSharpChatClient("phi4");
-
-        //builder.AddOllamaSharpChatClient("ollama-llama3-3");
-
-        // migrate to microsoft unified ...? 
         builder.AddKeyedOllamaSharpChatClient("phi4");
-        builder.Services.AddChatClient(sp => sp.GetRequiredKeyedService<IChatClient>("phi4"));
 
-        //builder.AddKeyedOllamaSharpChatClient("codellama");
+        var phiCconnectionString = builder.Configuration.GetConnectionString("phi4");
+        var phiSettings = ModelConnectionSettings.Parse(phiCconnectionString);
 
-        //var settings = new OllamaPromptExecutionSettings { FunctionChoiceBehavior = FunctionChoiceBehavior.Auto() };
-        //Endpoint=http://localhost:55206;Model=hf.co/matteogeniaccio/phi-4
-        //var modelId = "phi4";
-        //var endpoint = ";
-
-        //builder.Services.AddOllamaChatCompletion(modelId: "phi4", endpoint: "http://localhost:55206", serviceId: null);
-
-        //var kernalBuilder = Kernel.CreateBuilder();
-        //kernalBuilder.AddInMemoryVectorStore();
-        //kernalBuilder.AddOllamaChatCompletion(modelId: modelId, endpoint: endpoint, serviceId: null);
+        builder.Services.AddScoped<HomeAssistandPlugin>();
+        builder.Services.AddOllamaChatCompletion(phiSettings.Model, phiSettings.Endpoint);
+        builder.Services.AddKeyedTransient("HomeAssistantKernal", (sp, key) => {
+            KernelPluginCollection pluginCollection = [];
+            pluginCollection.AddFromObject(sp.GetRequiredService<HomeAssistandPlugin>());
+            
+            return new Kernel(sp, pluginCollection);
+        });
 
 
-        ////builder.Services.AddOllamaChatCompletion(modelId, endpoint, null);
-
-        //builder.AddOllamaSharpChatClient("phi4");
+        builder.Services.AddTransient<HomeAssistantClient>();
     }
 
 #pragma warning restore SKEXP0070 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
 
 }
+

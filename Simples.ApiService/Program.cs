@@ -1,12 +1,5 @@
-using Microsoft.Extensions.AI;
-using Microsoft.SemanticKernel;
-using Microsoft.SemanticKernel.Connectors.Ollama;
-using OllamaSharp.Models;
-using OpenAI.Chat;
 using Simples.ApiService.Api;
-using Simples.ApiService.Clients;
 using Simples.ApiService.Registration;
-using Simples.ApiService.Services.HomeAutomation;
 using Simples.ApiService.Tools;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -21,7 +14,6 @@ builder.Services.AddProblemDetails();
 // Learn more about configuring OpenAPI at https://aka.ms/awspnet/openapi
 builder.Services.AddOpenApi();
 
-builder.Services.AddScoped<TestChatContext>();
 builder.Services.AddLogging(logging => {
     logging.SetMinimumLevel(LogLevel.Information);
     logging.AddConsole();

@@ -1,4 +1,7 @@
-﻿namespace Simples.ApiService.Agents;
+﻿using Microsoft.SemanticKernel.ChatCompletion;
+using Microsoft.SemanticKernel;
+
+namespace Simples.ApiService.Agents;
 
 
 /// <summary>
@@ -44,4 +47,30 @@ public sealed class HomeAssistantDeviceAgent
 
 
 
+}
+
+
+public sealed class HomeAssistantClient
+{
+    private readonly Kernel kernal;
+    private readonly IChatCompletionService chatCompletionService;
+    private readonly PromptExecutionSettings promptSettings;
+
+    public HomeAssistantClient([FromKeyedServices("HomeAssistantKernal")] Kernel kernel)
+    {
+        this.kernal = kernel;
+        this.chatCompletionService = kernel.GetRequiredService<IChatCompletionService>();
+        this.promptSettings = new PromptExecutionSettings()
+        {
+            FunctionChoiceBehavior = FunctionChoiceBehavior.Auto()
+        };
+    }
+
+    public async Task<ChatMessageContent> Chat(string message, CancellationToken ct)
+    {
+        ChatMessageContent chatResult = await chatCompletionService.GetChatMessageContentAsync(
+            message, promptSettings, this.kernal, ct);
+
+        return chatResult;
+    }
 }
