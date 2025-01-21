@@ -5,7 +5,7 @@
       "commandName": "Project",
       "dotnetRunMessages": true,
       "launchBrowser": false,
-      "applicationUrl": "http://localhost:34558",
+      "applicationUrl": "http://localhost:34554",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
@@ -14,7 +14,7 @@
       "commandName": "Project",
       "dotnetRunMessages": true,
       "launchBrowser": false,
-      "applicationUrl": "https://localhost:34557;http://localhost:34558",
+      "applicationUrl": "https://localhost:34555;http://localhost:34558",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }

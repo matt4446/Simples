@@ -22,7 +22,8 @@ public static class ChatApiExtensions
         }).WithName("chat-with-cat");
 
 
-        app.MapPost("/chat-simple", async (IChatClient chat, TestChatContext testChatContext, ChatMessage message) =>
+        app.MapPost("/chat-simple", async (IChatClient chat, 
+            TestChatContext testChatContext, ChatMessage message) =>
         {
             ChatCompletion result = await chat.CompleteAsync(message.Message);
 

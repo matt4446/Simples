@@ -1,0 +1,38 @@
+#!meta
+
+{"kernelInfo":{"defaultKernelName":"csharp","items":[{"aliases":[],"name":"csharp"}]}}
+
+#!csharp
+
+// https://localhost:34555
+
+// route: /chat
+
+#!csharp
+
+using System.Net.Http;
+using System.Text;
+using System.Threading.Tasks;
+
+
+public async Task<string> GetResponse(string message)
+{
+    var client = new HttpClient();
+    var content = new StringContent($"{{\"message\":\"{message}\"}}", Encoding.UTF8, "application/json");
+    var response = await client.PostAsync("https://localhost:34555/chat-simple", content);
+    response.EnsureSuccessStatusCode();
+
+    var responseContent = await response.Content.ReadAsStringAsync();
+    return responseContent;
+}
+
+#!csharp
+
+var helloWorld = await GetResponse("Hello, World!");
+
+helloWorld.Display();
+
+
+
+var getDevices = await GetResponse("Get devices");
+getDevices.Display();
