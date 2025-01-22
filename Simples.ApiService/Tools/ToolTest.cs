@@ -26,14 +26,14 @@ public class HomeAssistandPlugin(
         return [];
     }
 
-    [KernelFunction("turn on a all lights")]
+    [KernelFunction("turn_on_all_lights")]
     [Description("Turn on all lights for all rooms")]
     public async Task<List<LightModel>> TurnOnAllLightsAsync(CancellationToken cancellationToken = default!)
     {
         return [];
     }
 
-    [KernelFunction("Change the state of a room's lights")]
+    [KernelFunction("Change_the_state_of_device")]
     [Description("Turn on all lights assigned to a room")]
     public async Task<List<LightModel>> TurnOnAllLightsForRoomAsync(string room, LightState targetState, CancellationToken cancellationToken = default!)
     {
@@ -42,8 +42,8 @@ public class HomeAssistandPlugin(
 
     public enum LightState
     {
-        On,
-        Off
+        Off = 0,
+        On = 1,
     }
 }
 

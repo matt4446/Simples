@@ -1,6 +1,5 @@
 using Simples.ApiService.Api;
 using Simples.ApiService.Registration;
-using Simples.ApiService.Tools;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,7 +9,6 @@ builder.AddServiceDefaults();
 // Add services to the container.
 builder.Services.AddProblemDetails();
 
-//builder.AddOllamaClientApi("llama3");
 // Learn more about configuring OpenAPI at https://aka.ms/awspnet/openapi
 builder.Services.AddOpenApi();
 

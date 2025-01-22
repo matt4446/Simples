@@ -3,9 +3,9 @@ using Throw;
 
 namespace Simples.ApiService.Registration;
 
-public sealed record ModelConnectionSettings(string ConnectionString, Uri Endpoint, string Model) 
+public sealed record AspireModelConnectionSettings(string ConnectionString, Uri Endpoint, string Model) 
 {
-    public static ModelConnectionSettings Parse(string connectionString) {
+    public static AspireModelConnectionSettings Parse(string connectionString) {
 
         var connectionBuilder = new DbConnectionStringBuilder
         {
@@ -21,6 +21,6 @@ public sealed record ModelConnectionSettings(string ConnectionString, Uri Endpoi
         if (!hadModel) {
             model.ThrowIfNull();
         }
-        return new ModelConnectionSettings(connectionString, new Uri(endpoint.ToString(), uriKind: UriKind.Absolute), model.ToString());
+        return new AspireModelConnectionSettings(connectionString, new Uri(endpoint.ToString(), uriKind: UriKind.Absolute), model.ToString());
     }
 }

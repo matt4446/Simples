@@ -1,8 +1,6 @@
-﻿using Microsoft.SemanticKernel.Connectors.Ollama;
-using Microsoft.SemanticKernel;
+﻿using Microsoft.SemanticKernel;
 using Simples.ApiService.Services.HomeAutomation;
 using Simples.ApiService.Tools;
-using Microsoft.SemanticKernel.ChatCompletion;
 using Simples.ApiService.Agents;
 
 namespace Simples.ApiService.Registration;
@@ -16,10 +14,8 @@ public static class AiRegiistrationExtensions
         builder.Services.AddScoped<HomeAutomationWebSocket>();
         builder.Services.AddScoped<UpdateHomeAutomationService>();
 
-        builder.AddKeyedOllamaSharpChatClient("phi4");
-
         var phiCconnectionString = builder.Configuration.GetConnectionString("phi4");
-        var phiSettings = ModelConnectionSettings.Parse(phiCconnectionString);
+        var phiSettings = AspireModelConnectionSettings.Parse(phiCconnectionString!);
 
         builder.Services.AddScoped<HomeAssistandPlugin>();
         builder.Services.AddOllamaChatCompletion(phiSettings.Model, phiSettings.Endpoint);
