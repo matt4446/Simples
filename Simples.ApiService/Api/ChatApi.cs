@@ -16,7 +16,7 @@ public static class ChatApiExtensions
         app.MapGet("/chat", ([FromServices] IChatClient chat) => new ChatMessage("Hello, World!"))
             .WithName("GetChatMessage");
 
-        app.MapPost("/chat2", async ([FromServices] HomeAssistantClient testChatContext, [FromBody] ChatMessage message, 
+        app.MapPost("/chat2", async ([FromServices] HomeAssistantAgent testChatContext, [FromBody] ChatMessage message, 
             CancellationToken cancellationToken) =>
         {
             var result = await testChatContext.Chat(message.Message, cancellationToken);

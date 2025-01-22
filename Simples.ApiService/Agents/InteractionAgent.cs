@@ -1,6 +1,6 @@
-﻿using Microsoft.SemanticKernel.ChatCompletion;
-using Microsoft.SemanticKernel;
-using Microsoft.Extensions.AI;
+﻿using Microsoft.SemanticKernel;
+using Microsoft.SemanticKernel.Agents;
+using Microsoft.SemanticKernel.ChatCompletion;
 
 namespace Simples.ApiService.Agents;
 
@@ -48,14 +48,14 @@ public sealed class HomeAssistantDeviceAgent
 }
 
 
-public sealed class HomeAssistantClient
+public sealed class HomeAssistantAgent
 {
     private readonly Kernel kernal;
     private readonly IChatCompletionService chatCompletionService;
     private readonly ChatHistory chatHistory;
     private readonly PromptExecutionSettings promptSettings;
 
-    public HomeAssistantClient([FromKeyedServices("HomeAssistantKernal")] Kernel kernel)
+    public HomeAssistantAgent([FromKeyedServices("HomeAssistantKernal")]Kernel kernel)
     {
         this.kernal = kernel;
         this.chatCompletionService = kernel.GetRequiredService<IChatCompletionService>();
@@ -66,14 +66,31 @@ public sealed class HomeAssistantClient
             FunctionChoiceBehavior = FunctionChoiceBehavior.Auto(),
         };
     }
+#pragma warning disable SKEXP0110 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
 
     public async Task<ChatMessageContent> Chat(string message, CancellationToken ct)
     {
         chatHistory.AddUserMessage(message);
 
+        ChatCompletionAgent agent =
+            new()
+            {
+                Name = "SummarizationAgent",
+                Instructions = "Summarize user input",
+                Kernel = this.kernal
+            };
+
+        // Generate the agent response(s)
+        await foreach (ChatMessageContent response in agent.InvokeAsync(chatHistory))
+        {
+            // Process agent response(s)...
+        }
+
         ChatMessageContent chatResult = await chatCompletionService.GetChatMessageContentAsync(
-            chatHistory, promptSettings, this.kernal, ct);
+            chatHistory, promptSettings, kernal, ct);
 
         return chatResult;
     }
+#pragma warning restore SKEXP0110 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
+
 }

@@ -1,3 +1,4 @@
+using Microsoft.Extensions.DependencyInjection;
 using Simples.ApiService.Api;
 using Simples.ApiService.Registration;
 
