@@ -28,11 +28,5 @@ public async Task<string> GetResponse(string message)
 
 #!csharp
 
-var helloWorld = await GetResponse("Hello, World!");
-
-helloWorld.Display();
-
-
-
-var getDevices = await GetResponse("Get devices");
+var getDevices = await GetResponse("Name the lights in my house");
 getDevices.Display();
