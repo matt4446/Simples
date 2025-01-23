@@ -13,6 +13,8 @@ public static class HomeAssistantExtensions
 
         builder.Services.AddHttpClient<HomeAssistantApiClient>((configure) => {
             var token = builder.Configuration["HomeAssistant:LongLivedAccessToken"];
+            
+            configure.BaseAddress = new("http://homeassistant");
             configure.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
         });
     }

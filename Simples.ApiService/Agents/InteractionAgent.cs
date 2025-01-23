@@ -4,25 +4,6 @@ using Microsoft.SemanticKernel.ChatCompletion;
 
 namespace Simples.ApiService.Agents;
 
-
-/// <summary>
-/// Make sense of hte input to delegate to other agents  
-/// </summary>
-public sealed class InteractionAgent 
-{
-    public const string AgentInstructions = """
-        You help organsise automations 
-        """;
-
-    public AlternativeAgents OtherInteractiveClients = new AlternativeAgents();
-}
-
-
-public sealed class AlternativeAgents
-{
-    public InteractionAgent interactionAgent = new InteractionAgent();
-}
-
 /// <summary>
 /// Generate automations 
 /// </summary>
@@ -31,8 +12,6 @@ public sealed class CodeAgent
     public const string AgentInstructions = """
         You create automations in YAML to control devices in HomeAssistant. 
         """;
-
-
 }
 
 /// <summary>
@@ -47,7 +26,6 @@ public sealed class HomeAssistantDeviceAgent
         """;
 }
 
-
 public sealed class HomeAssistantAgent
 {
     private readonly Kernel kernal;
@@ -60,7 +38,7 @@ public sealed class HomeAssistantAgent
         this.kernal = kernel;
         this.chatCompletionService = kernel.GetRequiredService<IChatCompletionService>();
         this.chatHistory = new ChatHistory();
-        this.chatHistory.AddSystemMessage("You are an AI assistant that helps with home automation");
+        this.chatHistory.AddSystemMessage(HomeAssistantDeviceAgent.AgentInstructions);
         this.promptSettings = new PromptExecutionSettings()
         {
             FunctionChoiceBehavior = FunctionChoiceBehavior.Auto(),
@@ -72,19 +50,15 @@ public sealed class HomeAssistantAgent
     {
         chatHistory.AddUserMessage(message);
 
-        ChatCompletionAgent agent =
-            new()
-            {
-                Name = "SummarizationAgent",
-                Instructions = "Summarize user input",
-                Kernel = this.kernal
-            };
+        //ChatCompletionAgent agent =
+        //    new()
+        //    {
+        //        Name = "SummarizationAgent",
+        //        Instructions = "Summarize user input",
+        //        Kernel = this.kernal
+        //    };
 
-        // Generate the agent response(s)
-        await foreach (ChatMessageContent response in agent.InvokeAsync(chatHistory))
-        {
-            // Process agent response(s)...
-        }
+        //agent.InvokeAsync(chatHistory, promptSettings, ct);
 
         ChatMessageContent chatResult = await chatCompletionService.GetChatMessageContentAsync(
             chatHistory, promptSettings, kernal, ct);
