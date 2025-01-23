@@ -16,7 +16,7 @@ public static class AiRegiistrationExtensions
         web.Services.AddScoped<HomeAutomationWebSocket>();
         web.Services.AddScoped<UpdateHomeAutomationService>();
 
-        var modelConnectionString = web.Configuration.GetConnectionString("ollama-llama3-3");
+        var modelConnectionString = web.Configuration.GetConnectionString("ollama-llama3-2");
         var modelSettings = AspireModelConnectionSettings.Parse(modelConnectionString!);
 
         web.Services.AddScoped<HomeAssistandPlugin>();

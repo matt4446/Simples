@@ -28,5 +28,25 @@ public async Task<string> GetResponse(string message)
 
 #!csharp
 
+var getDevices = await GetResponse("What lights do i have in my office? And which are on");
+getDevices.Display();
+
+#!csharp
+
 var getDevices = await GetResponse("Name the lights in my house");
 getDevices.Display();
+
+#!csharp
+
+var getDevices = await GetResponse("Turn on all lights");
+getDevices.Display();
+
+#!csharp
+
+var getDevices = await GetResponse("Turn off all lights");
+getDevices.Display();
+
+#!csharp
+
+var zones = await GetResponse("Whats zones are there in my house");
+zones.Display();

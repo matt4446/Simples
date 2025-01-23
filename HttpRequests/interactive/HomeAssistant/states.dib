@@ -19,5 +19,22 @@ public async Task<string> GetHomeAssistantDataAsync(string url, string token)
     }
 }
 
-var result = await GetHomeAssistantDataAsync("http://127.0.0.1:57980/api/states", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJiM2Y1YTAwOGVjZjY0NTliOWZhYTQ5MmNiZDU2YWYxNSIsImlhdCI6MTczNzI0OTE5OCwiZXhwIjoyMDUyNjA5MTk4fQ.nxSbJGEMScLBhwAggw3rqjht-MZpVbmO0Jr_9ADdkzc");
+var result = await GetHomeAssistantDataAsync("http://localhost:51174/api/states", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJiM2Y1YTAwOGVjZjY0NTliOWZhYTQ5MmNiZDU2YWYxNSIsImlhdCI6MTczNzI0OTE5OCwiZXhwIjoyMDUyNjA5MTk4fQ.nxSbJGEMScLBhwAggw3rqjht-MZpVbmO0Jr_9ADdkzc");
 result.Display();
+
+#!csharp
+
+public async Task<string> ChangeLightStateAsync(string url, string token, string entityId, bool newState)
+{
+    using (HttpClient client = new HttpClient())
+    {
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+        var content = new StringContent($"{{\"entity_id\": \"{entityId}\", \"state\": \"{(newState ? "on" : "off")}\"}}", Encoding.UTF8, "application/json");
+        HttpResponseMessage response = await client.PostAsync(url, content);
+        response.EnsureSuccessStatusCode();
+        return await response.Content.ReadAsStringAsync();
+    }
+}
+
+var changeResult = await ChangeLightStateAsync("http://localhost:58657/api/services/light/turn_on", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJiM2Y1YTAwOGVjZjY0NTliOWZhYTQ5MmNiZDU2YWYxNSIsImlhdCI6MTczNzI0OTE5OCwiZXhwIjoyMDUyNjA5MTk4fQ.nxSbJGEMScLBhwAggw3rqjht-MZpVbmO0Jr_9ADdkzc", "light.living_room", true);
+changeResult.Display();

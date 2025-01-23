@@ -8,6 +8,7 @@ public sealed class GetFromHomeAutomationSerivce(HomeAssistantApiClient homeAssi
     public async Task<ResultState[]> GetAllStatesAsync(StatusType stateType, CancellationToken cancellationToken = default)
     {
         var route = HomeAutomationRoutes.States.GetAllStates.Route();
+        
         using var response = await homeAssistantApiClient.HttpClient.GetAsync(route, cancellationToken);
         response.EnsureSuccessStatusCode();
         

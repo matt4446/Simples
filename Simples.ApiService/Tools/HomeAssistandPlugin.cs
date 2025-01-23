@@ -4,8 +4,6 @@ using System.ComponentModel;
 
 namespace Simples.ApiService.Tools;
 
-public record QuickReference(string Id, string Name);
-
 public class HomeAssistandPlugin(
     ILogger<HomeAssistandPlugin> logger,
     GetFromHomeAutomationSerivce getFromHomeAutomationSerivce, 
@@ -33,29 +31,46 @@ public class HomeAssistandPlugin(
         return results.Select(x => new QuickReference(x.EntityId, x.FriendlyName)).ToArray();
     }
 
-    [KernelFunction("get_all_lights_in_a_room")]
-    [Description("Gets a list of devices like lights available in a room")]
-    public async Task<ResultState[]> GetRoomDevicesAsync(string entityId, CancellationToken cancellationToken = default!)
-    { 
-        logger.LogInformation("## Plugin: Getting room devices");
-        var results = await getFromHomeAutomationSerivce.GetSingleStateAsync(entityId, cancellationToken);
-        return [];
+    //[KernelFunction("get_lights_belonging_to_a_zone")]
+    //[Description("Gets a list of devices like lights available in a room belonging to the entity id")]
+    //public async Task<ResultState[]> GetRoomDevicesAsync(string entityId, CancellationToken cancellationToken = default!)
+    //{ 
+    //    logger.LogInformation("## Plugin: Getting room devices");
+    //    var results = await getFromHomeAutomationSerivce.GetSingleStateAsync(entityId, cancellationToken);
+    //    return [];
+    //}
+
+    [KernelFunction("turn_off_all_lights")]
+    [Description("Turn off all lights")]
+    public async Task<bool> TurnOffAllLightsAsync(CancellationToken cancellationToken = default!)
+    {
+        logger.LogInformation("## Plugin: Turn off all lights");
+        var lights = await this.GetAllLightDevicesAsync(cancellationToken);
+
+        var allOff = lights.Select(device => updateHomeAutomationService.UpdateStateAsync(device.Id, new { 
+            state = "off"
+        })).ToArray();
+
+        await Task.WhenAll(allOff);
+
+        return true;
     }
 
     [KernelFunction("turn_on_all_lights")]
-    [Description("Turn on all lights for all rooms")]
-    public async Task<ResultState[]> TurnOnAllLightsAsync(CancellationToken cancellationToken = default!)
+    [Description("Turn on all lights")]
+    public async Task<bool> TurnOnAllLightsAsync(CancellationToken cancellationToken = default!)
     {
         logger.LogInformation("## Plugin: Turn on all lights");
-        return [];
-    }
+        var lights = await this.GetAllLightDevicesAsync(cancellationToken);
 
-    [KernelFunction("Change_the_state_of_device")]
-    [Description("Turn on all lights assigned to a room")]
-    public async Task<ResultState[]> TurnOnAllLightsForRoomAsync(string room, LightState targetState, CancellationToken cancellationToken = default!)
-    {
-        logger.LogInformation("## Plugin: Turn off all lights");
-        return [];
+        var allOn = lights.Select(device => updateHomeAutomationService.UpdateStateAsync(device.Id, new
+        {
+            state = "on"
+        })).ToArray();
+
+        await Task.WhenAll(allOn);
+
+        return true;
     }
 
     public enum LightState
