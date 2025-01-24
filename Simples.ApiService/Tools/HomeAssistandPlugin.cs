@@ -6,8 +6,9 @@ namespace Simples.ApiService.Tools;
 
 public class HomeAssistandPlugin(
     ILogger<HomeAssistandPlugin> logger,
-    GetFromHomeAutomationSerivce getFromHomeAutomationSerivce, 
-    UpdateHomeAutomationService updateHomeAutomationService)
+    GetFromHomeAutomationSerivce getFromHomeAutomationSerivce,
+    UpdateHomeAutomationService updateHomeAutomationService,
+    LightAutomationService lightAutomationService)
 {
     [KernelFunction("get_all_zones")]
     [Description("Gets the zones or rooms in the house")]
@@ -17,7 +18,7 @@ public class HomeAssistandPlugin(
         var results = await getFromHomeAutomationSerivce
             .GetAllStatesAsync(StatusType.Zone, cancellationToken);
 
-        return results.Select(x=> new QuickReference(x.EntityId, x.FriendlyName)).ToArray();
+        return results.Select(x => new QuickReference(x.EntityId, x.FriendlyName)).ToArray();
     }
 
     [KernelFunction("get_all_lights")]
@@ -45,11 +46,9 @@ public class HomeAssistandPlugin(
     public async Task<bool> TurnOffAllLightsAsync(CancellationToken cancellationToken = default!)
     {
         logger.LogInformation("## Plugin: Turn off all lights");
-        var lights = await this.GetAllLightDevicesAsync(cancellationToken);
 
-        var allOff = lights.Select(device => updateHomeAutomationService.UpdateStateAsync(device.Id, new { 
-            state = "off"
-        })).ToArray();
+        var lights = await this.GetAllLightDevicesAsync(cancellationToken);
+        var allOff = lights.Select(device => lightAutomationService.ChangeLightState(device.Id, OnOff.Off)).ToArray();
 
         await Task.WhenAll(allOff);
 
@@ -61,12 +60,9 @@ public class HomeAssistandPlugin(
     public async Task<bool> TurnOnAllLightsAsync(CancellationToken cancellationToken = default!)
     {
         logger.LogInformation("## Plugin: Turn on all lights");
-        var lights = await this.GetAllLightDevicesAsync(cancellationToken);
 
-        var allOn = lights.Select(device => updateHomeAutomationService.UpdateStateAsync(device.Id, new
-        {
-            state = "on"
-        })).ToArray();
+        var lights = await this.GetAllLightDevicesAsync(cancellationToken);
+        var allOn = lights.Select(device => lightAutomationService.ChangeLightState(device.Id, OnOff.On)).ToArray();
 
         await Task.WhenAll(allOn);
 

@@ -18,6 +18,8 @@
 
 		<PackageReference Include="Microsoft.Extensions.AI.Ollama" Version="9.1.0-preview.1.25064.3" /> -->
 
+		<PackageReference Include="Enums.NET" Version="5.0.0" />
+
 		<PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.1" />
 
 		<PackageReference Include="Microsoft.SemanticKernel" Version="1.33.0" />

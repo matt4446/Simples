@@ -9,6 +9,7 @@ public static class HomeAssistantExtensions
         builder.Services.AddScoped<GetFromHomeAutomationSerivce>();
         builder.Services.AddScoped<HomeAutomationWebSocket>();
         builder.Services.AddScoped<UpdateHomeAutomationService>();
+        builder.Services.AddScoped<LightAutomationService>();
 
 
         builder.Services.AddHttpClient<HomeAssistantApiClient>((configure) => {
