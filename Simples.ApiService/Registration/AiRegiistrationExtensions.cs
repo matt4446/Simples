@@ -18,19 +18,23 @@ public static class AiRegiistrationExtensions
 
         var modelConnectionString = web.Configuration.GetConnectionString("ollama-llama3-2");
         // doesnt support tools
-        // var modelConnectionString = web.Configuration.GetConnectionString("ollama-deepseek-r1");
-        var modelSettings = AspireModelConnectionSettings.Parse(modelConnectionString!);
+        var deepSeekModelConnectionString = web.Configuration.GetConnectionString("ollama-deepseek-r1");
+        var ollamaModelSettings = AspireModelConnectionSettings.Parse(modelConnectionString!);
+        var deepSeekSettings = AspireModelConnectionSettings.Parse(modelConnectionString!);
 
         web.Services.AddScoped<HomeAssistandPlugin>();
         web.Services.AddTransient<HomeAssistantAgent>();
-        web.Services.AddKeyedTransient<Kernel>("HomeAssistantKernal", (sp, key) =>
+        web.Services.AddKeyedTransient<Kernel>("HomeAssistantKernel", (sp, key) =>
         {
             //KernelPluginCollection pluginCollection = [];
             //pluginCollection.AddFromObject(sp.GetRequiredService<HomeAssistandPlugin>());
 
             IKernelBuilder builder = Kernel.CreateBuilder();
             builder.Services.AddTransient<HomeAssistandPlugin>();
-            builder.Services.AddOllamaChatCompletion(modelSettings.Model, modelSettings.Endpoint);
+            builder.Services.AddOllamaChatCompletion(ollamaModelSettings.Model, ollamaModelSettings.Endpoint);
+            builder.Services.AddOllamaChatCompletion(deepSeekSettings.Model, deepSeekSettings.Endpoint);
+            builder.Services.AddOllamaTextEmbeddingGeneration(deepSeekSettings.Model, deepSeekSettings.Endpoint);
+
             builder.Plugins.AddFromObject(sp.GetRequiredService<HomeAssistandPlugin>());
             var kernel = builder.Build();
 

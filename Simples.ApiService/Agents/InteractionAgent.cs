@@ -32,7 +32,7 @@ public sealed class HomeAssistantAgent
     private readonly ChatHistory chatHistory;
     private readonly PromptExecutionSettings promptSettings;
 
-    public HomeAssistantAgent([FromKeyedServices("HomeAssistantKernal")]Kernel kernel)
+    public HomeAssistantAgent([FromKeyedServices("HomeAssistantKernel")]Kernel kernel)
     {
         this.kernal = kernel;
         this.chatCompletionService = kernel.GetRequiredService<IChatCompletionService>();
