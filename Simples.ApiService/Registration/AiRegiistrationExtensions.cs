@@ -17,6 +17,8 @@ public static class AiRegiistrationExtensions
         web.Services.AddScoped<UpdateHomeAutomationService>();
 
         var modelConnectionString = web.Configuration.GetConnectionString("ollama-llama3-2");
+        // doesnt support tools
+        // var modelConnectionString = web.Configuration.GetConnectionString("ollama-deepseek-r1");
         var modelSettings = AspireModelConnectionSettings.Parse(modelConnectionString!);
 
         web.Services.AddScoped<HomeAssistandPlugin>();

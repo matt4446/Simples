@@ -14,6 +14,7 @@ var ollama = builder.AddOllama("ollama")
     .PublishAsContainer();
 
 var llama = ollama.AddModel("llama3.2");
+var deepseek = ollama.AddModel("deepseek-r1");
 //var codellama = ollama.AddModel("codellama");
 // openChat = ollama.AddModel("openchat");
 // embed 
@@ -35,7 +36,8 @@ var apiService = builder
     .AddProject<Projects.Simples_ApiService>("apiservice")
     .WithReference(homeAssistantHttp)
     .WithReference(homeAssistantHttps)
-    .WithReference(llama);
+    .WithReference(llama)
+    .WithReference(deepseek);
     //.WithReference(codellama)
     //.WithReference(openChat)
     //.WithReference(phi4);
