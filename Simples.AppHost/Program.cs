@@ -37,17 +37,20 @@ var apiService = builder
     .WithReference(homeAssistantHttp)
     .WithReference(homeAssistantHttps)
     .WithReference(llama)
-    .WithReference(deepseek);
+    .WithReference(deepseek)
+    ;
     //.WithReference(codellama)
     //.WithReference(openChat)
     //.WithReference(phi4);
 
 builder.AddNpmApp("svelete", "../Simples.Svelete")
-    .WithReference(apiService)
+    //.WithReference(apiService)
     .WaitFor(apiService)
+    .WithEnvironment("VITE_ApiService", apiService.GetEndpoint("https"))
     .WithEnvironment("BROWSER", "none") // Disable opening browser on npm start
     .WithHttpEndpoint(env: "5173", targetPort: 5173)
     .WithExternalHttpEndpoints()
+    //.WithEnvironment("API_SERVICE_URL", () => apiService.Resource.GetEndpoints().FirstOrDefault().Url)
     .PublishAsDockerFile();
 
 builder.Build().Run();

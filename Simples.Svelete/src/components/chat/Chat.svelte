@@ -53,15 +53,16 @@
         tap((response) => {
           console.log(response);
         }),
-        tap((updatedResponse) => {
-          botMessage.text = updatedResponse.choices[0].contents;
-          botMessage.isLoading = false;
+        tap((apiResponse) => {
+          botMessage.text = apiResponse.items[0].text;
         }),
         finalize(() => {
           botMessage.isLoading = false;
           botMessage.timestamp = new Date().toLocaleString();
 
           isLoading = false;
+
+          messages = [...messages, botMessage];
         })
       )
       .subscribe();
@@ -73,7 +74,7 @@
 
 <Card.Root>
   <Card.Header>
-    <h2>Chat</h2>
+    <h2>Chat 2</h2>
   </Card.Header>
   <Card.Content class="flex-1 overflow-y-auto p-6">
     {#if messages.length === 0}

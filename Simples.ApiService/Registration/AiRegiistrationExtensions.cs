@@ -26,9 +26,6 @@ public static class AiRegiistrationExtensions
         web.Services.AddTransient<HomeAssistantAgent>();
         web.Services.AddKeyedTransient<Kernel>("HomeAssistantKernel", (sp, key) =>
         {
-            //KernelPluginCollection pluginCollection = [];
-            //pluginCollection.AddFromObject(sp.GetRequiredService<HomeAssistandPlugin>());
-
             IKernelBuilder builder = Kernel.CreateBuilder();
             builder.Services.AddTransient<HomeAssistandPlugin>();
             builder.Services.AddOllamaChatCompletion(ollamaModelSettings.Model, ollamaModelSettings.Endpoint);
@@ -39,23 +36,7 @@ public static class AiRegiistrationExtensions
             var kernel = builder.Build();
 
             return kernel;
-            //return new Kernel(sp, pluginCollection);
-        });
-
-        //builder.Services.AddTransient<IChatClient>(serviceProvider => {
-        //    var loggerFactory = serviceProvider.GetService<ILoggerFactory>();
-        //    var chatClient = new OllamaChatClient(phiSettings.Endpoint, phiSettings.Model);
-
-        //    ChatOptions chatOptions = new()
-        //    {
-        //        Tools = [AIFunctionFactory.Create(GetWeather)]
-        //    };
-
-        //    return chatClient;
-        //});
-
-
-        
+        });        
     }
 
 #pragma warning restore SKEXP0070 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.

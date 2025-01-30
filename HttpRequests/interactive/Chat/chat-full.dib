@@ -1,0 +1,37 @@
+#!meta
+
+{"kernelInfo":{"defaultKernelName":"csharp","items":[{"aliases":[],"name":"csharp"}]}}
+
+#!csharp
+
+#r "nuget: Microsoft.SemanticKernel, 1.23.0"
+#r "nuget: Microsoft.SemanticKernel.Connectors.Ollama, 1.33.0-alpha"
+#r "nuget: Microsoft.Extensions.AI.Ollama, 9.1.0-preview.1.25064.3"
+
+#!csharp
+
+using Kernel = Microsoft.SemanticKernel.Kernel;
+using Microsoft.SemanticKernel.Connectors.Ollama;
+using Microsoft.SemanticKernel.ChatCompletion;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.SemanticKernel;
+
+// Inject your logger 
+// see Microsoft.Extensions.Logging.ILogger @ https://learn.microsoft.com/dotnet/core/extensions/logging
+ILoggerFactory myLoggerFactory = NullLoggerFactory.Instance;
+
+var builder = Kernel.CreateBuilder();
+var modelId = "llama3.2";
+var endpoint = new Uri("http://localhost:11434");
+#pragma warning disable SKEXP0070
+builder.Services.AddOllamaChatCompletion(modelId, endpoint);
+var kernel = builder.Build();
+
+var settings = new OllamaPromptExecutionSettings { FunctionChoiceBehavior = FunctionChoiceBehavior.Auto() };
+
+
+Console.Write("> ");
+
+#pragma warning restore SKEXP0070
