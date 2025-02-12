@@ -2,9 +2,8 @@ import { fontFamily } from "tailwindcss/defaultTheme";
 import type { Config } from "tailwindcss";
 
 const config: Config = {
-	darkMode: ["class"],
+	darkMode: "class",
 	content: ["./src/**/*.{html,js,svelte,ts}"],
-	safelist: ["dark"],
 	theme: {
 		container: {
 			center: true,
@@ -88,7 +87,7 @@ const config: Config = {
        			"caret-blink": "caret-blink 1.25s ease-out infinite",
       		},
 		},
-	}
+	},
 };
 
 export default config;

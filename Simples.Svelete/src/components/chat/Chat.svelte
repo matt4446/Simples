@@ -1,30 +1,46 @@
 <script lang="ts">
-  import {
-    Icon,
-    ArrowPathRoundedSquare,
-    PaperAirplane,
-  } from "svelte-hero-icons";
   import { onMount } from "svelte";
   import * as Card from "$lib/components/ui/card";
-  import Button from "$lib/components/ui/button/button.svelte";
-  import Textarea from "$lib/components/ui/textarea/textarea.svelte";
   import { chatService } from "../../services/chatService";
-  import { finalize, pipe, tap } from "rxjs";
-
-  interface Message {
-    text: string;
-    sender: "user" | "bot";
-    timestamp: string | null;
-    isLoading: boolean;
-  }
+  import { finalize, pipe, tap, catchError, of } from "rxjs";
+  import { marked } from 'marked';
+  import MessageList from "./MessageList.svelte";
+  import ChatInput from "./ChatInput.svelte";
+  import type { Message } from "../../types";
 
   let messages: Message[] = [];
-  let newMessage = "";
   let isLoading = false;
 
-  async function sendMessage() {
+  function handleKeydown(event: KeyboardEvent) {
+    console.log("handle keydown");
+    if (event.key === 'Enter' && !event.shiftKey) {
+      event.preventDefault();
+      const target = event.target as HTMLTextAreaElement;
+      const text = target.value.trim();
+      if (text) {
+        handleSendMessage(text);
+        target.value = '';
+      }
+    }
+  }
 
-    if (!newMessage.trim()) {
+  function handleSendMessage(text: string) {
+    console.log("handleSendMessage wrapper called with text:", text);
+    if (!text?.trim()) {
+      console.log("Message is empty, not sending");
+      return;
+    }
+    sendMessage(text);
+  }
+
+  function processMarkdown(text: string): string {
+    return marked.parse(text) as string;
+  }
+
+  async function sendMessage(text: string) {
+    console.log("send message", text);
+    if (!text.trim() || isLoading) {
+      console.log("Message is empty or already loading, not sending", text, isLoading);
       return;
     }
 
@@ -33,7 +49,7 @@
     messages = [
       ...messages,
       {
-        text: newMessage,
+        text: text,
         sender: "user",
         timestamp: userTimestamp,
         isLoading: false,
@@ -47,67 +63,72 @@
       isLoading: true,
     };
 
+    // Add the loading message immediately
+    messages = [...messages, botMessage];
+
     chatService
-      .ask(newMessage)
+      .ask(text)
       .pipe(
         tap((response) => {
           console.log(response);
         }),
         tap((apiResponse) => {
           botMessage.text = apiResponse.items[0].text;
+          botMessage.error = false;
+        }),
+        catchError((error) => {
+          console.error('Chat error:', error);
+          botMessage.text = "Sorry, I encountered an error processing your request.";
+          botMessage.error = true;
+          return of(null);
         }),
         finalize(() => {
           botMessage.isLoading = false;
           botMessage.timestamp = new Date().toLocaleString();
-
           isLoading = false;
-
-          messages = [...messages, botMessage];
+          // Update the bot message in place
+          messages = messages.map(m => 
+            m === botMessage ? { ...botMessage } : m
+          );
         })
       )
       .subscribe();
-
-      isLoading = true;
-      newMessage = "";
   }
 </script>
 
-<Card.Root>
+<Card.Root class="h-full flex flex-col">
   <Card.Header>
-    <h2>Chat 2</h2>
+    <h2 class="text-xl font-semibold">Chat Assistant</h2>
   </Card.Header>
-  <Card.Content class="flex-1 overflow-y-auto p-6">
-    {#if messages.length === 0}
-      <p class="text-gray-500">No messages yet. Start the conversation!</p>
-    {/if}
-
-    {#each messages as message}
-      <div
-        class="mb-2 p-2 rounded-lg {message.sender === 'user'
-          ? 'bg-gray-700 self-end'
-          : 'bg-slate-700'}"
-      >
-        {message.text}
-        <small class="text-gray-500">{message.timestamp}</small>
-      </div>
-    {/each}
+  <Card.Content class="flex-1 overflow-y-auto p-6 space-y-4 max-h-[600px]">
+    <MessageList {messages} {processMarkdown} />
   </Card.Content>
-  <Card.Footer>
-    <div class="relative w-full max-w-full justify-self-center flex gap-4">
-      <Textarea
-        bind:value={newMessage}
-        placeholder="Type a message..."
-        class="block resize-none rounded-md border-0 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none sm:text-sm/6 [field-sizing:content] dark:text-gray-100 dark:bg-gray-800 dark:ring-gray-600"
-      />
-
-      <Button onclick={() => sendMessage()} disabled={isLoading}>
-        {#if isLoading}
-          <Icon src={ArrowPathRoundedSquare} class="animate-spin" />
-        {:else}
-          <Icon src={PaperAirplane} />
-          Send
-        {/if}
-      </Button>
-    </div>
+  <Card.Footer class="p-4 border-t">
+    <ChatInput 
+      {isLoading} 
+      {handleKeydown} 
+      sendMessage={sendMessage} 
+    />
   </Card.Footer>
 </Card.Root>
+
+<style>
+  :global(.chat-message p) {
+    margin-bottom: 0.5em;
+  }
+  :global(.chat-message p:last-child) {
+    margin-bottom: 0;
+  }
+  :global(.chat-message pre) {
+    background: rgba(0, 0, 0, 0.1);
+    padding: 0.5em;
+    border-radius: 4px;
+    overflow-x: auto;
+  }
+  :global(.chat-message code) {
+    font-family: monospace;
+    background: rgba(0, 0, 0, 0.1);
+    padding: 0.2em 0.4em;
+    border-radius: 3px;
+  }
+</style>
