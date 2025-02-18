@@ -4,6 +4,12 @@ using Simples.ApiService.Registration;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Add configuration sources
+if (builder.Environment.IsDevelopment())
+{
+    builder.Configuration.AddUserSecrets<Program>();
+}
+
 // Add service defaults & Aspire client integrations.
 builder.AddServiceDefaults();
 
@@ -33,7 +39,6 @@ builder.Services.AddCors(options =>
                       });
 });
 
-// bearer token: HomeAssistant:LongLivedAccessToken
 
 builder.AddHomeAssistant();
 builder.AddLocalChatClients();

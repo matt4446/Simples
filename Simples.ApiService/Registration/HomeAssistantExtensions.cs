@@ -11,12 +11,20 @@ public static class HomeAssistantExtensions
         builder.Services.AddScoped<UpdateHomeAutomationService>();
         builder.Services.AddScoped<LightAutomationService>();
 
-
+        // bearer token: HomeAssistant:LongLivedAccessToken
         builder.Services.AddHttpClient<HomeAssistantApiClient>((configure) => {
-            var token = builder.Configuration["HomeAssistant:LongLivedAccessToken"];
             
-            configure.BaseAddress = new("http://homeassistant");
+            var (host, token) = builder.Configuration.GetHomeAssistantConfig();
+
+            configure.BaseAddress = new(host);
             configure.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
         });
+    }
+
+    public static (string host, string token) GetHomeAssistantConfig(this IConfiguration configuration)
+    {
+        var host = configuration["HomeAssistant:Host"];
+        var token = configuration["HomeAssistant:LongLivedAccessToken"];
+        return (host, token);
     }
 }

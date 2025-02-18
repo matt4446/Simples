@@ -1,6 +1,7 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import * as Card from "$lib/components/ui/card";
+  import Button from "$lib/components/ui/button/button.svelte";
   import { chatService } from "../../services/chatService";
   import { finalize, pipe, tap, catchError, of } from "rxjs";
   import { marked } from 'marked';
@@ -10,6 +11,23 @@
 
   let messages: Message[] = [];
   let isLoading = false;
+
+  // Load messages from localStorage on mount
+  onMount(() => {
+    const stored = localStorage.getItem('chatMessages');
+    if (stored) {
+      messages = JSON.parse(stored);
+    }
+  });
+
+  // Save messages to localStorage whenever they change
+  $: {
+    if (messages.length > 0) {
+      // Keep only the last 5 messages
+      const lastFiveMessages = messages.slice(-5);
+      localStorage.setItem('chatMessages', JSON.stringify(lastFiveMessages));
+    }
+  }
 
   function handleKeydown(event: KeyboardEvent) {
     console.log("handle keydown");
@@ -94,11 +112,17 @@
       )
       .subscribe();
   }
+
+  function clearHistory() {
+    messages = [];
+    localStorage.removeItem('chatMessages');
+  }
 </script>
 
 <Card.Root class="h-full flex flex-col">
-  <Card.Header>
+  <Card.Header class="flex justify-between items-center">
     <h2 class="text-xl font-semibold">Chat Assistant</h2>
+    <Button variant="outline" size="sm" onclick={clearHistory}>Clear History</Button>
   </Card.Header>
   <Card.Content class="flex-1 overflow-y-auto p-6 space-y-4 max-h-[600px]">
     <MessageList {messages} {processMarkdown} />

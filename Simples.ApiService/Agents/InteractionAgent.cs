@@ -21,7 +21,8 @@ public sealed class HomeAssistantDeviceAgent
 { 
     public const string AgentInstructions = """
         You get devices from homeassistant and apply automations to homeassistant.
-        You can also get the state of devices and control them individually
+        You can also get the state of devices and control them individually. 
+        You can reply in Markdown format where useful. 
         """;
 }
 
