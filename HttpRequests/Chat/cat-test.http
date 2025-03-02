@@ -1,8 +1,0 @@
-POST https://localhost:34557/chat-simple-cat
-Content-Type: application/json
-
-{
-  "Message": "Hello, this is a test message",
-  "userId": "12345"
-}
-

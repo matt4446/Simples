@@ -23,7 +23,7 @@ public static class AiRegiistrationExtensions
         var deepSeekSettings = AspireModelConnectionSettings.Parse(modelConnectionString!);
 
         web.Services.AddScoped<HomeAssistandPlugin>();
-        web.Services.AddTransient<HomeAssistantAgent>();
+        web.Services.AddTransient<HomeAssistantAgents>();
         web.Services.AddKeyedTransient<Kernel>("HomeAssistantKernel", (sp, key) =>
         {
             IKernelBuilder builder = Kernel.CreateBuilder();
@@ -32,7 +32,7 @@ public static class AiRegiistrationExtensions
             builder.Services.AddOllamaChatCompletion(deepSeekSettings.Model, deepSeekSettings.Endpoint);
             builder.Services.AddOllamaTextEmbeddingGeneration(deepSeekSettings.Model, deepSeekSettings.Endpoint);
 
-            builder.Plugins.AddFromObject(sp.GetRequiredService<HomeAssistandPlugin>());
+            
             var kernel = builder.Build();
 
             return kernel;

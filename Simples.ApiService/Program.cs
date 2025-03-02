@@ -54,8 +54,8 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
-app.MapGet("/ping", () => "Pong");
 app.MapChatApi();
+app.MapHomeAutomationApi();
 app.MapDefaultEndpoints();
 app.UseCors(MyAllowSpecificOrigins);
 

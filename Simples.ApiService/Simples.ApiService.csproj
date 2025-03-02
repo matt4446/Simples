@@ -13,19 +13,19 @@
 
 	<ItemGroup>
 
-		<PackageReference Include="Enums.NET" Version="5.0.0" />
+		<PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.2" />
 
-		<PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.1" />
+		<PackageReference Include="Microsoft.SemanticKernel" Version="1.37.0" />
 
-		<PackageReference Include="Microsoft.SemanticKernel" Version="1.33.0" />
+		<PackageReference Include="Microsoft.SemanticKernel.Agents.Abstractions" Version="1.37.0-alpha" />
 
-		<PackageReference Include="Microsoft.SemanticKernel.Agents.Abstractions" Version="1.33.0-alpha" />
+		<PackageReference Include="Microsoft.SemanticKernel.Agents.Core" Version="1.37.0-alpha" />
 
-		<PackageReference Include="Microsoft.SemanticKernel.Agents.Core" Version="1.33.0-alpha" />
+		<PackageReference Include="Microsoft.SemanticKernel.Agents.OpenAI" Version="1.37.0-alpha" />
 
-		<PackageReference Include="Microsoft.SemanticKernel.Agents.OpenAI" Version="1.33.0-alpha" />
+		<PackageReference Include="Microsoft.SemanticKernel.Connectors.Ollama" Version="1.37.0-alpha" />
 
-		<PackageReference Include="Microsoft.SemanticKernel.Connectors.Ollama" Version="1.33.0-alpha" />
+		<PackageReference Include="Singulink.Enums" Version="2.1.1" />
 
 		<PackageReference Include="Throw" Version="1.4.0" />
 		

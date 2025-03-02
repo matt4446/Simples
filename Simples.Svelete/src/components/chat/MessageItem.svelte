@@ -8,6 +8,11 @@
 
 <div class="flex {message.sender === 'user' ? 'justify-end' : 'justify-start'}">
   <div class="message-container w-[80%] max-h-[300px] overflow-y-auto rounded-lg p-3 border border-black/10 shadow-sm {message.sender === 'user' ? 'bg-teal-100 dark:bg-teal-800 text-primary-foreground' : message.error ? 'bg-destructive/10 text-destructive dark:bg-destructive/20' : 'bg-slate-100 dark:bg-slate-800'} scrollbar-thin scrollbar-track-transparent scrollbar-thumb-black/20 dark:scrollbar-thumb-white/20 dark:border-white/10">
+    {#if message.author && message.sender !== 'user'}
+      <div class="text-xs mb-1 font-medium text-gray-600 dark:text-gray-400">
+        {message.author}
+      </div>
+    {/if}
     <div class="whitespace-pre-wrap break-words">
       {#if message.isLoading}
         <div class="flex items-center gap-2">

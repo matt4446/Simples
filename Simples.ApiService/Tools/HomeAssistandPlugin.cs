@@ -1,6 +1,7 @@
 ﻿using Microsoft.SemanticKernel;
 using Simples.ApiService.Services.HomeAutomation;
 using System.ComponentModel;
+using System.Linq;
 
 namespace Simples.ApiService.Tools;
 
@@ -18,7 +19,7 @@ public class HomeAssistandPlugin(
         var results = await getFromHomeAutomationSerivce
             .GetAllStatesAsync(StatusType.Zone, cancellationToken);
 
-        return results.Select(x => new QuickReference(x.EntityId, x.FriendlyName)).ToArray();
+        return results.Select(x => new QuickReference(x.EntityId, x.FriendlyName, x.State)).ToArray();
     }
 
     [KernelFunction("get_all_lights")]
@@ -29,7 +30,7 @@ public class HomeAssistandPlugin(
         var results = await getFromHomeAutomationSerivce
             .GetAllStatesAsync(StatusType.Light, cancellationToken);
 
-        return results.Select(x => new QuickReference(x.EntityId, x.FriendlyName)).ToArray();
+        return results.Select(x => new QuickReference(x.EntityId, x.FriendlyName, x.State)).ToArray();
     }
 
     //[KernelFunction("get_lights_belonging_to_a_zone")]

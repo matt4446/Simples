@@ -11,6 +11,13 @@
 
   let messages: Message[] = [];
   let isLoading = false;
+  let messageContainer: HTMLDivElement | null = null;
+
+  function scrollToBottom() {
+    if (messageContainer) {
+      messageContainer.scrollTop = messageContainer.scrollHeight;
+    }
+  }
 
   // Load messages from localStorage on mount
   onMount(() => {
@@ -18,14 +25,17 @@
     if (stored) {
       messages = JSON.parse(stored);
     }
+    scrollToBottom();
   });
 
-  // Save messages to localStorage whenever they change
+  // Scroll to bottom whenever messages change
   $: {
     if (messages.length > 0) {
       // Keep only the last 5 messages
       const lastFiveMessages = messages.slice(-5);
       localStorage.setItem('chatMessages', JSON.stringify(lastFiveMessages));
+      // Add a small delay to ensure the DOM has updated
+      setTimeout(scrollToBottom, 0);
     }
   }
 
@@ -71,18 +81,9 @@
         sender: "user",
         timestamp: userTimestamp,
         isLoading: false,
+        author: "user"
       },
     ];
-
-    let botMessage: Message = {
-      text: "",
-      sender: "bot",
-      timestamp: null,
-      isLoading: true,
-    };
-
-    // Add the loading message immediately
-    messages = [...messages, botMessage];
 
     chatService
       .ask(text)
@@ -90,24 +91,38 @@
         tap((response) => {
           console.log(response);
         }),
-        tap((apiResponse) => {
-          botMessage.text = apiResponse.items[0].text;
-          botMessage.error = false;
+        tap((apiResponses) => {
+          apiResponses.forEach(response => {
+            response.items.forEach(item => {
+              if (item.text?.trim()) {
+                let newBotMessage: Message = {
+                  text: item.text,
+                  sender: "bot",
+                  timestamp: new Date().toLocaleString(),
+                  isLoading: false,
+                  error: false,
+                  author: response.authorName
+                };
+                messages = [...messages, newBotMessage];
+              }
+            });
+          });
         }),
         catchError((error) => {
           console.error('Chat error:', error);
-          botMessage.text = "Sorry, I encountered an error processing your request.";
-          botMessage.error = true;
+          let errorMessage: Message = {
+            text: "Sorry, I encountered an error processing your request.",
+            sender: "bot",
+            timestamp: new Date().toLocaleString(),
+            isLoading: false,
+            error: true,
+            author: "assistant"
+          };
+          messages = [...messages, errorMessage];
           return of(null);
         }),
         finalize(() => {
-          botMessage.isLoading = false;
-          botMessage.timestamp = new Date().toLocaleString();
           isLoading = false;
-          // Update the bot message in place
-          messages = messages.map(m => 
-            m === botMessage ? { ...botMessage } : m
-          );
         })
       )
       .subscribe();
@@ -124,14 +139,15 @@
     <h2 class="text-xl font-semibold">Chat Assistant</h2>
     <Button variant="outline" size="sm" onclick={clearHistory}>Clear History</Button>
   </Card.Header>
-  <Card.Content class="flex-1 overflow-y-auto p-6 space-y-4 max-h-[600px]">
+  <div bind:this={messageContainer} class="flex-1 overflow-y-auto p-6 space-y-4 max-h-[600px]">
     <MessageList {messages} {processMarkdown} />
-  </Card.Content>
+  </div>
   <Card.Footer class="p-4 border-t">
     <ChatInput 
       {isLoading} 
       {handleKeydown} 
-      sendMessage={sendMessage} 
+      {sendMessage}
+      {messages}
     />
   </Card.Footer>
 </Card.Root>

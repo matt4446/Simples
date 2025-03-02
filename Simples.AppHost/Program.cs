@@ -30,18 +30,18 @@ var deepseek = ollama.AddModel("deepseek-r1");
 //var phi35 = ollama.AddModel("phi3.5");
 
 // copy out and moving to deployed version.
-var homeAssistant = builder.AddContainer("homeassistant", "homeassistant/home-assistant")
-    .WithVolume("config", "/config")
-    .WithHttpEndpoint(targetPort: 8123)
-    .WithLifetime(ContainerLifetime.Persistent);
+// var homeAssistant = builder.AddContainer("homeassistant", "homeassistant/home-assistant")
+//     .WithVolume("config", "/config")
+//     .WithHttpEndpoint(targetPort: 8123)
+//     .WithLifetime(ContainerLifetime.Persistent);
 
 //var homeAssistantHttp = homeAssistant.GetEndpoint("http");
-var homeAssistantHttps = homeAssistant.GetEndpoint("https");
+//var homeAssistantHttps = homeAssistant.GetEndpoint("https");
 
 var apiService = builder
     .AddProject<Projects.Simples_ApiService>("apiservice")
     //.WithReference(homeAssistantHttp)
-    .WithReference(homeAssistantHttps)
+    //.WithReference(homeAssistantHttps)
     .WithReference(llama)
     .WithReference(deepseek)
     ;

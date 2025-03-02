@@ -18,6 +18,7 @@
   };
 
   const handleKeydownLocal = (event: KeyboardEvent) => {
+    console.log("key up")
     if (event.key === 'ArrowUp' && !newMessage.trim()) {
       event.preventDefault();
       // Find the last user message

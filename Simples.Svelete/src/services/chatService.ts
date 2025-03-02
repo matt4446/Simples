@@ -17,7 +17,8 @@ interface responseElement {
   modelId : string,
   role :{
     Label : string
-  }
+  },
+  authorName : string
 }
 interface responsePart {
   $type : string;
@@ -26,7 +27,7 @@ interface responsePart {
 }
 
 export const chatService = {
-  ask(question: string): Observable<responseElement> {
+  ask(question: string): Observable<responseElement[]> {
     var uri = VITE_ApiService;
 
     var query = fromFetch(`${uri}/chat2`, {
